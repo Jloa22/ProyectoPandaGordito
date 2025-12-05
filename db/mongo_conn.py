@@ -1,6 +1,10 @@
+import os
 from pymongo import MongoClient
 
-MONGO_URI = "mongodb+srv://admin:rI6RCQ1eq5ca91WD@cluster0.vvaxbv1.mongodb.net/?retryWrites=true&w=majority"
+MONGO_URI = os.getenv("MONGO_URI")
+
+if not MONGO_URI:
+    raise ValueError("❌ ERROR: No se encontró la variable de entorno MONGO_URI")
 
 client = MongoClient(MONGO_URI)
 
