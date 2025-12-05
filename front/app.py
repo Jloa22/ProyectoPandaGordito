@@ -30,7 +30,7 @@ from pyvis.network import Network
 import streamlit.components.v1 as components
 
 from back.dijkstra import ejecutar_dijkstra
-from back.DFS import ejecutar_dfs
+from back.DFS import analizar_componentes
 from back.datos import cargar_grafo
 from db.users_db import crear_usuario, login_usuario
 
@@ -787,6 +787,17 @@ elif opcion == "🕸️ Grafo por departamento":
 
         subG = G.subgraph(nodos_dep).copy()
 
+        from back.DFS import analizar_componentes
+
+        res_dfs = analizar_componentes(G, familias_dep)
+
+
+        st.markdown("### 🧠 Análisis estructural (DFS)")
+        st.write(f"Componentes encontrados: **{res_dfs['cantidad_componentes']}**")
+        st.write(f"Familias en el componente más grande: **{res_dfs['mayor_componente']}**")
+        st.write(f"Cobertura del componente principal: **{res_dfs['porcentaje']}%**")
+
+
         num_nodos = subG.number_of_nodes()
         num_aristas = subG.number_of_edges()
 
@@ -839,19 +850,28 @@ elif opcion == "🕸️ Grafo por departamento":
                 unsafe_allow_html=True,
             )
 
-        # Resumen numérico
+# ===============================
+#      INTEGRAR DFS AL RESUMEN
+# ===============================
+        
+        familias_totales_dep = len(familias_dep)
+        familias_conectadas_dfs = res_dfs.get("cantidad", 0)
+        porcentaje_dfs = round((familias_conectadas_dfs / familias_totales_dep) * 100, 2)
+        
         resumen_df = pd.DataFrame(
             {
                 "Departamento": [dep_str],
-                "Nodos_totales": [num_nodos],
-                "Familias": [len(familias_en_subgrafo)],
+                "Familias totales": [familias_totales_dep],
+                "Familias conectadas (DFS)": [res_dfs["mayor_componente"]],
+                "Segundo componente (DFS)": [res_dfs["segundo_componente"]],
+                "Cobertura DFS (%)": [res_dfs["porcentaje"]],
                 "Entidades": [len(entidades_en_subgrafo)],
-                "Aristas": [num_aristas],
             }
         )
+        
         st.markdown("<div class='card'>", unsafe_allow_html=True)
         st.markdown(
-            "<p class='section-title'>Resumen numérico del subgrafo</p>",
+            "<p class='section-title'>Resumen numérico del subgrafo + DFS</p>",
             unsafe_allow_html=True,
         )
         st.dataframe(resumen_df, use_container_width=True)

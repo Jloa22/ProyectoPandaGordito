@@ -8,6 +8,7 @@ __pycache__/
 
 # Configuraciones locales
 .vscode/
+.streamlit/
 
 # Archivos HTML generados por PyVis
 *.html
