@@ -1,0 +1,16 @@
+# Entornos virtuales
+venv/
+.env/
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+
+# Configuraciones locales
+.vscode/
+
+# Archivos HTML generados por PyVis
+*.html
+
+# Archivos grandes o temporales
+*.log
