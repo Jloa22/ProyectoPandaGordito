@@ -25,7 +25,6 @@ import pandas as pd
 import pydeck as pdk
 import plotly.express as px
 import networkx as nx
-import matplotlib.pyplot as plt
 from pyvis.network import Network
 import streamlit.components.v1 as components
 
@@ -301,7 +300,7 @@ import os
 # Bypass del login cuando estamos en Railway
 if os.environ.get("RAILWAY_ENVIRONMENT"):
     session_state["usuario"] = {"nombre": "RailwayUser"}
-    
+
 if session_state["usuario"] is None:
 
     st.title("🔐 Iniciar Sesión")
