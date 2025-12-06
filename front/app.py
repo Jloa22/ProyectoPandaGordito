@@ -275,57 +275,70 @@ st.markdown(
 st.markdown("""
 <style>
 
-    /* ==============================
-       🔧 FIX: INPUTS (login/registro)
-       ============================== */
-    input, 
-    .stTextInput > div > div > input {
-        color: black !important;
-        background: white !important;
+    /* =====================================================
+       🔵 FIX 1 — Inputs y selects (quitar color negro)
+       ===================================================== */
+    .stTextInput > div > div > input,
+    .stSelectbox div[data-baseweb="select"] > div {
+        background-color: white !important;   /* Fondo blanco */
+        color: black !important;              /* Texto negro */
+        border: 1px solid #d1d5db !important; /* Borde gris suave */
+        border-radius: 12px !important;
     }
 
-    /* Placeholder negro */
-    input::placeholder {
-        color: black !important;
-        opacity: 1 !important;
-    }
-
-    /* Labels */
-    label, .stTextInput label {
-        color: black !important;
-        font-weight: 600 !important;
-    }
-
-    /* ==============================
-       🔧 FIX: SELECTBOX
-       ============================== */
-    .stSelectbox div[data-baseweb="select"] * {
-        color: black !important;   /* Texto interno */
-    }
-
+    /* Lista desplegable del select */
     div[role="listbox"] div[data-testid="styled-option"] {
-        color: black !important; 
-        background: white !important;
+        background-color: white !important;
+        color: black !important;
     }
 
-    /* ==============================
-       🔧 FIX: BOTONES (volver a blanco)
-       ============================== */
-    div.stButton > button {
-        color: white !important;          /* Texto blanco visible */
-        background-color: #2563eb !important; /* Azul original */
-        border-radius: 999px !important;
-        font-weight: 600 !important;
+    /* Placeholder visible */
+    input::placeholder {
+        color: #6b7280 !important;
     }
 
-    /* Hover más oscuro */
-    div.stButton > button:hover {
-        background-color: #1e40af !important;
-        color: #111 !important;
+
+    /* =====================================================
+       🔵 FIX 2 — Títulos y subtítulos invisibles
+       ===================================================== */
+    h1, h2, h3, h4, h5, h6,
+    .big-title,
+    .section-title,
+    .section-subtitle,
+    .metric-label,
+    .metric-value,
+    .algo-title,
+    .footer-note {
+        color: #111827 !important; /* Gris oscuro visible */
+    }
+
+
+    /* =====================================================
+       🔵 FIX 3 — Recuadro de comparaciones Bellman–Ford / Dijkstra
+       ===================================================== */
+    .stMarkdown p, .stMarkdown span, .stMarkdown strong {
+        color: #111827 !important;
+    }
+
+
+    /* =====================================================
+       🔵 FIX 4 — Resumen del departamento (títulos invisibles)
+       ===================================================== */
+    .stColumn div p {
+        color: #111827 !important;
+    }
+
+
+    /* =====================================================
+       🔵 FIX 5 — Separación para que NO se monte sobre el grafo
+       ===================================================== */
+    .stColumn {
+        padding-top: 15px !important;
     }
 
 </style>
 """, unsafe_allow_html=True)
+
 
 
 
