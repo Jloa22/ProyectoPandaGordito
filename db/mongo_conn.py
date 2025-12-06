@@ -1,4 +1,5 @@
 print("🔵 Railway detecta mongo_conn.py iniciando...")
+
 import os
 import streamlit as st
 from pymongo import MongoClient
@@ -24,7 +25,7 @@ def get_db():
         client.admin.command("ping")
         print("🟢 Conexión exitosa a MongoDB")
         return client["ProyectoBonos"]
+
     except Exception as e:
         print("❌ Mongo ERROR:", e)
-        return e
-
+        return None   # ❗ CORREGIDO
