@@ -2,8 +2,13 @@ import time
 import networkx as nx
 from back.datos import cargar_grafo
 
-def es_entidad(n):
-    return not n.isdigit()
+
+# -----------------------------
+#  DETECTOR CORRECTO DE ENTIDAD
+# -----------------------------
+def es_entidad(n, G):
+    return G.nodes[n].get("tipo") == "entidad"
+
 
 def ejecutar_bellman_ford(familia_id: str):
     G = cargar_grafo()
@@ -12,12 +17,11 @@ def ejecutar_bellman_ford(familia_id: str):
     if familia_id not in G:
         return {"error": f"La familia {familia_id} no existe."}
 
-    # Registrar tiempo
     inicio = time.time()
 
-    # -----------------------------------------
-    # 1️⃣ Obtener componente conexa (subgrafo)
-    # -----------------------------------------
+    # ---------------------------------------
+    #  Encontrar componente conexa
+    # ---------------------------------------
     componente = None
     for comp in nx.connected_components(G):
         if familia_id in comp:
@@ -29,9 +33,17 @@ def ejecutar_bellman_ford(familia_id: str):
 
     subG = G.subgraph(componente).copy()
 
-    # -----------------------------------------
-    # 2️⃣ Ejecutar Bellman–Ford sobre el subgrafo
-    # -----------------------------------------
+    # ---------------------------------------
+    #  Entidades reales (usando atributo tipo)
+    # ---------------------------------------
+    entidades = [n for n in subG.nodes() if es_entidad(n, subG)]
+
+    if not entidades:
+        return {"error": "No existen entidades conectadas."}
+
+    # ---------------------------------------
+    #  Ejecutar Bellman-Ford
+    # ---------------------------------------
     try:
         distancias, rutas = nx.single_source_bellman_ford(
             subG, familia_id, weight="weight"
@@ -39,22 +51,12 @@ def ejecutar_bellman_ford(familia_id: str):
     except nx.NetworkXUnbounded:
         return {"error": "El grafo contiene ciclos negativos."}
 
-    # Obtener entidades alcanzables
-    entidades = [n for n in subG.nodes() if es_entidad(n) and n in distancias]
+    entidades_dist = [(e, distancias[e]) for e in entidades if e in distancias]
 
-    if not entidades:
-        return {"error": "No existen entidades conectadas."}
-
-    # Ordenar por menor costo
-    entidades_ordenadas = sorted(
-        [(e, distancias[e]) for e in entidades],
-        key=lambda x: x[1]
-    )[:3]
-
-    fin = time.time()
+    mejores = sorted(entidades_dist, key=lambda x: x[1])[:3]
 
     resultados = []
-    for entidad, costo in entidades_ordenadas:
+    for entidad, costo in mejores:
         ruta = rutas[entidad]
         bono_estimado = round(1 / costo, 2)
         resultados.append({
@@ -64,9 +66,9 @@ def ejecutar_bellman_ford(familia_id: str):
             "bono_estimado": bono_estimado
         })
 
-    # -----------------------------------------
-    # 3️⃣ COMPLEJIDAD AUTOMÁTICA
-    # -----------------------------------------
+    fin = time.time()
+
+    # Complejidad
     V = subG.number_of_nodes()
     E = subG.number_of_edges()
 

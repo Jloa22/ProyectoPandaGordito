@@ -11,9 +11,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# Ya podemos escribir cosas
-st.write("APP CARGÓ CORRECTAMENTE")
-print("🔥 APP.PY SE EJECUTA HASTA ESTA LÍNEA")
 
 # ============================================================
 #       IMPORTS Y DEBUG INICIAL
@@ -23,10 +20,7 @@ import os
 import sys
 import traceback
 
-print("🔥 Streamlit iniciando...")
-print("ENV VARS:", dict(os.environ))
 
-open("streamlit_started.txt", "w").write("streamlit empezó correctamente")
 
 def global_excepthook(exctype, value, tb):
     print("🔥 Excepción global atrapada:")
@@ -34,15 +28,6 @@ def global_excepthook(exctype, value, tb):
 
 sys.excepthook = global_excepthook
 
-# ============================================================
-#         FIX: AGREGAR RUTA DEL PROYECTO
-# ============================================================
-
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if ROOT_DIR not in sys.path:
-    sys.path.append(ROOT_DIR)
-
-print("📦 Ruta agregada al sys.path:", ROOT_DIR)
 
 # ============================================================
 #   IMPORTS ATRAPADOS (VER ERRORES EN RAILWAY)
@@ -75,15 +60,14 @@ try:
 except Exception as e:
     print("❌ Error importando algoritmos:", e)
 
-print("🔥 DEBUG INICIAL COMPLETADO")
+
 
 # ============================================================
 #         IMPORTS DE LIBRERÍAS EXTERNAS
 # ============================================================
 
 import pandas as pd
-import pydeck as pdk
-import plotly.express as px
+
 import networkx as nx
 from pyvis.network import Network
 import streamlit.components.v1 as components
@@ -328,14 +312,15 @@ st.markdown("""
 
 @st.cache_data
 def cargar_datos():
-    nodos = pd.read_csv("data/nodos.csv", dtype=str)
-    aristas = pd.read_csv("data/aristas.csv", dtype=str, low_memory=False)
+    ruta = os.path.join(os.path.dirname(__file__), "../data")
+
+    nodos = pd.read_csv(os.path.join(ruta, "nodos.csv"), dtype=str)
+    aristas = pd.read_csv(os.path.join(ruta, "aristas.csv"), dtype=str, low_memory=False)
 
     nodos["Id"] = nodos["Id"].str.strip().str.upper()
     nodos["Type"] = nodos["Type"].str.strip().str.lower()
-    nodos["DEPARTAMENTO GRUPO FAMILIAR"] = (
-        nodos["DEPARTAMENTO GRUPO FAMILIAR"].str.strip().str.upper()
-    )
+    nodos["DEPARTAMENTO GRUPO FAMILIAR"] = nodos["DEPARTAMENTO GRUPO FAMILIAR"].str.strip().str.upper()
+
     return nodos, aristas
 
 
@@ -348,7 +333,7 @@ session_state = cast(Dict[str, Any], st.session_state)
 if "usuario" not in session_state:
     session_state["usuario"] = None
 
-import os
+
 # Bypass del login cuando estamos en Railway
 if os.environ.get("RAILWAY_ENVIRONMENT"):
     session_state["usuario"] = {"nombre": "RailwayUser"}
@@ -640,9 +625,16 @@ elif opcion == "▶️ Recomendar entidad":
             for u, v, data in subG.edges(data=True):
                 grafo_inicial.add_edge(u, v, title=f"Peso: {data.get('weight', 1):.4f}")
 
-            grafo_inicial.save_graph("grafo_inicial.html")
-            components.html(open("grafo_inicial.html", "r", encoding="utf-8").read(),
-                            height=700)
+            # Crear ruta correcta del HTML junto al app.py
+            html_path = os.path.join(os.path.dirname(__file__), "grafo_inicial.html")
+
+            # Guardar archivo en la carpeta correcta
+            grafo_inicial.save_graph(html_path)
+
+            # Renderizar
+            components.html(open(html_path, "r", encoding="utf-8").read(),
+                        height=700)
+
 
         # -------------------------------
         #     TOP 3 ENTIDADES
@@ -701,9 +693,10 @@ elif opcion == "▶️ Recomendar entidad":
             for i in range(len(ruta_final) - 1):
                 grafo_final.add_edge(ruta_final[i], ruta_final[i+1], color="red")
 
-            grafo_final.save_graph("grafo_final.html")
-            components.html(open("grafo_final.html", "r", encoding="utf-8").read(),
-                            height=700)
+            html_final = os.path.join(os.path.dirname(__file__), "grafo_final.html")
+            grafo_final.save_graph(html_final)
+            components.html(open(html_final, "r", encoding="utf-8").read(), height=700)
+
 
         # -------------------------------
         #     COMPARACIÓN BF vs DIJKSTRA
@@ -984,8 +977,9 @@ elif opcion == "🕸️ Grafo por departamento":
             peso = data.get("weight", 1)
             grafo_dep.add_edge(u, v, title=f"Peso: {peso}")
 
-        path_html_dep = "grafo_departamento.html"
+        path_html_dep = os.path.join(os.path.dirname(__file__), "grafo_departamento.html")
         grafo_dep.save_graph(path_html_dep)
+
 
 
         # ============================================================
