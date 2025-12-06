@@ -1,10 +1,3 @@
-import os
-print("🔥 Streamlit iniciando...")
-print("ENV VARS:", dict(os.environ))
-
-# Para saber si el archivo realmente se ejecuta
-open("streamlit_started.txt", "w").write("streamlit empezó correctamente")
-
 from typing import Dict, Any
 from werkzeug.security import generate_password_hash, check_password_hash
 from db.mongo_conn import get_db

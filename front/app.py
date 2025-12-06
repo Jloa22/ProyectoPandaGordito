@@ -1,3 +1,8 @@
+print("🔥 APP.PY SE EJECUTA HASTA ESTA LÍNEA")
+
+import streamlit as st  # ← IMPORT STREAMLIT PRIMERO
+st.write("APP CARGÓ CORRECTAMENTE")
+
 import os
 import sys
 import traceback
@@ -52,10 +57,11 @@ try:
 except Exception as e:
     print("❌ Error importando algoritmos:", e)
 
+print("🔥 DEBUG INICIAL COMPLETADO")
+
 # ============================================================
-#        IMPORTS DE LIBRERÍAS EXTERNAS (SEGUROS)
+#    IMPORTS DE LIBRERÍAS EXTERNAS (SEGUROS Y NECESARIOS)
 # ============================================================
-import streamlit as st
 import pandas as pd
 import pydeck as pdk
 import plotly.express as px
@@ -64,7 +70,6 @@ from pyvis.network import Network
 import streamlit.components.v1 as components
 from typing import Any, Dict, cast
 
-print("🔥 Streamlit imports cargados correctamente")
 
 # ----------------------------
 #  CONFIGURACIÓN DE PÁGINA
