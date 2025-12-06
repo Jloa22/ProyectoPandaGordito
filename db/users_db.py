@@ -4,11 +4,12 @@ from db.mongo_conn import get_db
 
 # Inicializamos la BD y la colección
 db = get_db()
-if db:
+if db is not None:
     users = db["users"]
 else:
     print("❌ No hay DB, users no cargado")
     users = None
+
 
 Usuario = Dict[str, Any]
 

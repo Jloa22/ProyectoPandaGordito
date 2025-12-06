@@ -1,4 +1,25 @@
 # ============================================================
+#   ARREGLAR RUTAS PARA RAILWAY (IMPORTANTE)
+# ============================================================
+
+import os
+import sys
+
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.append(ROOT_DIR)
+
+print("📁 Carpeta raíz añadida al sistema:", ROOT_DIR)
+
+# Mostrar contenido del root para debug
+print("📂 Archivos del proyecto:", os.listdir(ROOT_DIR))
+
+# Rutas internas
+print("📂 Contenido de /back:", os.listdir(os.path.join(ROOT_DIR, "back")))
+print("📂 Contenido de /db:", os.listdir(os.path.join(ROOT_DIR, "db")))
+print("📂 Contenido de /data:", os.listdir(os.path.join(ROOT_DIR, "data")))
+
+# ============================================================
 #   INICIO: IMPORTAR STREAMLIT Y CONFIGURAR LA PÁGINA
 # ============================================================
 
@@ -16,8 +37,6 @@ st.set_page_config(
 #       IMPORTS Y DEBUG INICIAL
 # ============================================================
 
-import os
-import sys
 import traceback
 
 
