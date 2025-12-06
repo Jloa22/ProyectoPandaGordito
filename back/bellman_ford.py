@@ -3,11 +3,10 @@ import networkx as nx
 from back.datos import cargar_grafo
 
 
-# -----------------------------
-#  DETECTOR CORRECTO DE ENTIDAD
-# -----------------------------
 def es_entidad(n, G):
-    return G.nodes[n].get("tipo") == "entidad"
+    """Detector universal robusto."""
+    tipo = str(G.nodes[n].get("tipo", "")).strip().lower()
+    return tipo in ["entidad", "et", "tec", "tecnica", "ent"]
 
 
 def ejecutar_bellman_ford(familia_id: str):
@@ -19,9 +18,7 @@ def ejecutar_bellman_ford(familia_id: str):
 
     inicio = time.time()
 
-    # ---------------------------------------
-    #  Encontrar componente conexa
-    # ---------------------------------------
+    # 1. Buscar componente
     componente = None
     for comp in nx.connected_components(G):
         if familia_id in comp:
@@ -33,17 +30,12 @@ def ejecutar_bellman_ford(familia_id: str):
 
     subG = G.subgraph(componente).copy()
 
-    # ---------------------------------------
-    #  Entidades reales (usando atributo tipo)
-    # ---------------------------------------
+    # 2. Entidades
     entidades = [n for n in subG.nodes() if es_entidad(n, subG)]
-
     if not entidades:
         return {"error": "No existen entidades conectadas."}
 
-    # ---------------------------------------
-    #  Ejecutar Bellman-Ford
-    # ---------------------------------------
+    # 3. Bellman-Ford seguro
     try:
         distancias, rutas = nx.single_source_bellman_ford(
             subG, familia_id, weight="weight"
@@ -52,13 +44,12 @@ def ejecutar_bellman_ford(familia_id: str):
         return {"error": "El grafo contiene ciclos negativos."}
 
     entidades_dist = [(e, distancias[e]) for e in entidades if e in distancias]
-
     mejores = sorted(entidades_dist, key=lambda x: x[1])[:3]
 
     resultados = []
     for entidad, costo in mejores:
         ruta = rutas[entidad]
-        bono_estimado = round(1 / costo, 2)
+        bono_estimado = round(1 / costo, 2) if costo != 0 else float("inf")
         resultados.append({
             "entidad": entidad,
             "ruta": ruta,
@@ -68,10 +59,8 @@ def ejecutar_bellman_ford(familia_id: str):
 
     fin = time.time()
 
-    # Complejidad
     V = subG.number_of_nodes()
     E = subG.number_of_edges()
-
     complejidad = f"O(V·E) = O({V} × {E})"
 
     return {

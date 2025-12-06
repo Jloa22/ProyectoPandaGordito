@@ -125,12 +125,12 @@ st.markdown(
 
     section[data-testid="stSidebar"] {
         background: #1e3a8a !important;
-        color: white !important;
+        color: #111 !important;
         border-right: 1px solid #1e40af;
     }
 
     section[data-testid="stSidebar"] * {
-        color: white !important;
+        color: #111 !important;
     }
 
     .big-title {
@@ -256,12 +256,12 @@ st.markdown(
         border-radius: 999px !important;
         font-weight: 600 !important;
         background: var(--accent) !important;
-        color: white !important;
+        color: #111 !important;
     }
 
     .stTextInput > div > div > input,
     .stSelectbox > div > div {
-        background-color: white !important;
+        background-color: #111 !important;
         border-radius: 999px !important;
         border: 1px solid var(--border-soft) !important;
         color: var(--text-main) !important;
@@ -321,7 +321,7 @@ st.markdown("""
     /* Hover más oscuro */
     div.stButton > button:hover {
         background-color: #1e40af !important;
-        color: white !important;
+        color: #111 !important;
     }
 
 </style>
@@ -331,7 +331,8 @@ st.markdown("""
 
 @st.cache_data
 def cargar_datos():
-    ruta = os.path.join(os.path.dirname(__file__), "../data")
+    ruta = os.path.join(ROOT_DIR, "data")
+
 
     nodos = pd.read_csv(os.path.join(ruta, "nodos.csv"), dtype=str)
     aristas = pd.read_csv(os.path.join(ruta, "aristas.csv"), dtype=str, low_memory=False)
@@ -353,9 +354,6 @@ if "usuario" not in session_state:
     session_state["usuario"] = None
 
 
-# Bypass del login cuando estamos en Railway
-if os.environ.get("RAILWAY_ENVIRONMENT"):
-    session_state["usuario"] = {"nombre": "RailwayUser"}
 
 if session_state["usuario"] is None:
 
@@ -923,7 +921,7 @@ elif opcion == "🕸️ Grafo por departamento":
 # ===============================
         
         familias_totales_dep = len(familias_dep)
-        familias_conectadas_dfs = res_dfs.get("cantidad", 0)
+        familias_conectadas_dfs = res_dfs.get("cantidad_componentes", 0)
         porcentaje_dfs = round((familias_conectadas_dfs / familias_totales_dep) * 100, 2)
         
         resumen_df = pd.DataFrame(

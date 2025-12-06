@@ -1,24 +1,19 @@
 print("🔵 Railway detecta mongo_conn.py iniciando...")
 
 import os
-import streamlit as st
 from pymongo import MongoClient
 
 def get_db():
-    try:
-        mongo_uri = st.secrets.get("MONGO_URI", None)
-    except:
-        mongo_uri = None
-
-    if not mongo_uri:
-        mongo_uri = os.getenv("MONGO_URI")
+    # 1. Railway NO usa st.secrets, solo variables de entorno
+    mongo_uri = os.getenv("MONGO_URI")
 
     print("🔵 Cargando MONGO_URI:", mongo_uri)
-    print("🔵 Probando conexión...")
 
-    if not mongo_uri:
-        print("❌ No se encontró MONGO_URI en Railway")
+    if not mongo_uri or mongo_uri.startswith("="):
+        print("❌ ERROR: MONGO_URI inválida o mal configurada")
         return None
+
+    print("🔵 Probando conexión...")
 
     try:
         client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
@@ -28,4 +23,5 @@ def get_db():
 
     except Exception as e:
         print("❌ Mongo ERROR:", e)
-        return None   # ❗ CORREGIDO
+        return None
+
