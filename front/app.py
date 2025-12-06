@@ -1,7 +1,23 @@
+# ============================================================
+#   INICIO: IMPORTAR STREAMLIT Y CONFIGURAR LA PÁGINA
+# ============================================================
+
+import streamlit as st  # ← SIEMPRE primero
+
+# --- Streamlit debe configurarse ANTES de cualquier st.write ---
+st.set_page_config(
+    page_title="Plataforma CUPO X VIVIENDA",
+    page_icon="🏠",
+    layout="wide"
+)
+
+# Ya podemos escribir cosas
+st.write("APP CARGÓ CORRECTAMENTE")
 print("🔥 APP.PY SE EJECUTA HASTA ESTA LÍNEA")
 
-import streamlit as st  # ← IMPORT STREAMLIT PRIMERO
-st.write("APP CARGÓ CORRECTAMENTE")
+# ============================================================
+#       IMPORTS Y DEBUG INICIAL
+# ============================================================
 
 import os
 import sys
@@ -19,8 +35,9 @@ def global_excepthook(exctype, value, tb):
 sys.excepthook = global_excepthook
 
 # ============================================================
-#      FIX: AGREGAR LA RUTA DEL PROYECTO (IMPORTANTE)
+#         FIX: AGREGAR RUTA DEL PROYECTO
 # ============================================================
+
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if ROOT_DIR not in sys.path:
     sys.path.append(ROOT_DIR)
@@ -28,8 +45,9 @@ if ROOT_DIR not in sys.path:
 print("📦 Ruta agregada al sys.path:", ROOT_DIR)
 
 # ============================================================
-#   IMPORTS ATRAPADOS PARA VER ERRORES EN RAILWAY
+#   IMPORTS ATRAPADOS (VER ERRORES EN RAILWAY)
 # ============================================================
+
 try:
     from db.mongo_conn import get_db
     print("✔️ mongo_conn importado")
@@ -60,8 +78,9 @@ except Exception as e:
 print("🔥 DEBUG INICIAL COMPLETADO")
 
 # ============================================================
-#    IMPORTS DE LIBRERÍAS EXTERNAS (SEGUROS Y NECESARIOS)
+#         IMPORTS DE LIBRERÍAS EXTERNAS
 # ============================================================
+
 import pandas as pd
 import pydeck as pdk
 import plotly.express as px
@@ -70,15 +89,10 @@ from pyvis.network import Network
 import streamlit.components.v1 as components
 from typing import Any, Dict, cast
 
+# ============================================================
+#     (AQUÍ SIGUE TU CÓDIGO NORMAL, COMO LO TENÍAS)
+# ============================================================
 
-# ----------------------------
-#  CONFIGURACIÓN DE PÁGINA
-# ----------------------------
-st.set_page_config(
-    page_title="Plataforma CUPO X VIVIENDA",
-    page_icon="🏠",
-    layout="wide"
-)
 
 # ----------------------------
 #        ESTILOS CACHINEROS
