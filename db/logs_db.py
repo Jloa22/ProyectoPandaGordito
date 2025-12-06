@@ -3,7 +3,7 @@ from datetime import datetime
 
 db = get_db()
 
-if db:
+if db is not None:
     logs = db["logs"]
 else:
     print("❌ No hay DB, logs no cargado")
@@ -11,8 +11,9 @@ else:
 
 
 def guardar_log(usuario, algoritmo, entrada, salida):
+
     if logs is None:
-        print("❌ No se puede guardar log (DB no disponible)")
+        print("❌ No hay base de datos para logs")
         return
 
     logs.insert_one({

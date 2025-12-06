@@ -2,8 +2,10 @@ from typing import Dict, Any
 from werkzeug.security import generate_password_hash, check_password_hash
 from db.mongo_conn import get_db
 
+# Inicializamos la BD y la colección
 db = get_db()
-if db:
+
+if db is not None:
     users = db["users"]
 else:
     print("❌ No hay DB, users no cargado")
@@ -18,6 +20,7 @@ def crear_usuario(nombre: str, correo: str, password: str) -> Dict[str, Any]:
         return {"error": "Base de datos no disponible"}
 
     existente = users.find_one({"correo": correo})
+
     if existente:
         return {"error": "El correo ya está registrado"}
 
@@ -37,6 +40,7 @@ def login_usuario(correo: str, password: str) -> Dict[str, Any]:
         return {"error": "Base de datos no disponible"}
 
     user = users.find_one({"correo": correo})
+
     if not user:
         return {"error": "Correo no registrado"}
 
@@ -46,4 +50,3 @@ def login_usuario(correo: str, password: str) -> Dict[str, Any]:
         return {"error": "Contraseña incorrecta"}
 
     return {"user": user}
-
