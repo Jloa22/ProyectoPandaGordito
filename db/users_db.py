@@ -4,19 +4,20 @@ from db.mongo_conn import get_db
 
 # Inicializamos la BD y la colección
 db = get_db()
-users = db["users"]
+if db:
+    users = db["users"]
+else:
+    print("❌ No hay DB, users no cargado")
+    users = None
 
-# Alias de tipo para que Pylance sepa que un usuario es un diccionario
 Usuario = Dict[str, Any]
 
 
 def crear_usuario(nombre: str, correo: str, password: str) -> Dict[str, Any]:
-    """
-    Crea un usuario nuevo si el correo no existe.
-    Retorna:
-      - {"error": "..."} si ya existe
-      - {"ok": True} si se registra correctamente
-    """
+
+    if users is None:
+        return {"error": "Base de datos no disponible"}
+
     existente = users.find_one({"correo": correo})
 
     if existente:
@@ -33,18 +34,15 @@ def crear_usuario(nombre: str, correo: str, password: str) -> Dict[str, Any]:
 
 
 def login_usuario(correo: str, password: str) -> Dict[str, Any]:
-    """
-    Intenta loguear a un usuario.
-    Retorna:
-      - {"error": "..."} si algo falla
-      - {"user": user_dict} si el login es correcto
-    """
+
+    if users is None:
+        return {"error": "Base de datos no disponible"}
+
     user = users.find_one({"correo": correo})
 
     if not user:
         return {"error": "Correo no registrado"}
 
-    # 👇 Cast explícito para que Pylance deje de decir que es "object"
     user = dict(user)  # type: ignore[arg-type]
 
     if not check_password_hash(user["password"], password):
