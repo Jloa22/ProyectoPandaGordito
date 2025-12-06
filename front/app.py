@@ -1,25 +1,60 @@
-# ========================================
-#  AJUSTE DE RUTA PARA IMPORTAR /back
-# ========================================
-import sys
 import os
-from typing import Any, Dict, cast
+import sys
+import traceback
 
-# ========================================
-#  AJUSTE DE RUTA PARA IMPORTAR /db
-# ========================================
-import sys as _sys2  # solo para que no moleste el linter
-import os as _os2
+print("🔥 Streamlit iniciando...")
+print("ENV VARS:", dict(os.environ))
 
+open("streamlit_started.txt", "w").write("streamlit empezó correctamente")
+
+def global_excepthook(exctype, value, tb):
+    print("🔥 Excepción global atrapada:")
+    traceback.print_exception(exctype, value, tb)
+
+sys.excepthook = global_excepthook
+
+# ============================================================
+#      FIX: AGREGAR LA RUTA DEL PROYECTO (IMPORTANTE)
+# ============================================================
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if ROOT_DIR not in sys.path:
     sys.path.append(ROOT_DIR)
 
-from db.logs_db import guardar_log
+print("📦 Ruta agregada al sys.path:", ROOT_DIR)
 
-# ========================================
-#            IMPORTS NORMALES
-# ========================================
+# ============================================================
+#   IMPORTS ATRAPADOS PARA VER ERRORES EN RAILWAY
+# ============================================================
+try:
+    from db.mongo_conn import get_db
+    print("✔️ mongo_conn importado")
+except Exception as e:
+    print("❌ Error importando mongo_conn:", e)
+
+try:
+    from db.users_db import crear_usuario, login_usuario
+    print("✔️ users_db importado")
+except Exception as e:
+    print("❌ Error importando users_db:", e)
+
+try:
+    from db.logs_db import guardar_log
+    print("✔️ logs_db importado")
+except Exception as e:
+    print("❌ Error importando logs_db:", e)
+
+try:
+    from back.dijkstra import ejecutar_dijkstra
+    from back.DFS import analizar_componentes
+    from back.bellman_ford import ejecutar_bellman_ford
+    from back.datos import cargar_grafo
+    print("✔️ Algoritmos importados correctamente")
+except Exception as e:
+    print("❌ Error importando algoritmos:", e)
+
+# ============================================================
+#        IMPORTS DE LIBRERÍAS EXTERNAS (SEGUROS)
+# ============================================================
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
@@ -27,11 +62,9 @@ import plotly.express as px
 import networkx as nx
 from pyvis.network import Network
 import streamlit.components.v1 as components
+from typing import Any, Dict, cast
 
-from back.dijkstra import ejecutar_dijkstra
-from back.DFS import analizar_componentes
-from back.datos import cargar_grafo
-from db.users_db import crear_usuario, login_usuario
+print("🔥 Streamlit imports cargados correctamente")
 
 # ----------------------------
 #  CONFIGURACIÓN DE PÁGINA

@@ -13,6 +13,7 @@ def get_db():
         mongo_uri = os.getenv("MONGO_URI")
 
     print("🔵 Cargando MONGO_URI:", mongo_uri)
+    print("🔵 Probando conexión...")
 
     if not mongo_uri:
         print("❌ No se encontró MONGO_URI en Railway")
@@ -25,5 +26,5 @@ def get_db():
         return client["ProyectoBonos"]
     except Exception as e:
         print("❌ Mongo ERROR:", e)
-        return None
+        return e
 
