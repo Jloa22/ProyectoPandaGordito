@@ -297,6 +297,11 @@ session_state = cast(Dict[str, Any], st.session_state)
 if "usuario" not in session_state:
     session_state["usuario"] = None
 
+import os
+# Bypass del login cuando estamos en Railway
+if os.environ.get("RAILWAY_ENVIRONMENT"):
+    session_state["usuario"] = {"nombre": "RailwayUser"}
+    
 if session_state["usuario"] is None:
 
     st.title("🔐 Iniciar Sesión")
